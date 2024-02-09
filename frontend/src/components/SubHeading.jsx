@@ -1,7 +1,7 @@
 const SubHeading = ({ text }) => {
   return (
     <>
-      <div className="text-blue-500 text-md pt-1 ">{text}</div>
+       <div className="text-slate-500 text-md">{text}</div>
     </>
   );
 };
