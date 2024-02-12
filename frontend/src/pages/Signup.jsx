@@ -4,29 +4,35 @@ import SubHeading from "../components/SubHeading";
 import InputBox from "../components/InputBox";
 import BottomWarning from "../components/BottomWarning";
 import { useState } from "react";
-import axios from 'axios';
-// import Link from 'react-router-dom'
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
   //states
-
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
+  const [firstname, setFirstName] = useState("");
+  const [lastname, setLastName] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleOnClick = async() => {
+  const navigate = useNavigate();
+
+  const handleOnClick = async (event) => {
+    event.preventDefault();
     try {
-      const response=await axios.post('http://localhost:3000/api/v1/user/signup',{
-        username:email,
-        password:password,
-        firstName:firstName,
-        lastName:lastName
-      });
-      localStorage.setItem("token", response.data.token)
-      console.log("Signup Successful",response.data)
+      const response = await axios.post(
+        "http://localhost:3000/api/v1/user/signup",
+        {
+          username,
+          firstname,
+          lastname,
+          password,
+        }
+      );
+      localStorage.setItem("token", response.data.token);
+      navigate("/dashboard");
+      console.log("Signup Successful", response.data);
     } catch (error) {
-      console.log("Error in Signup",error);
+      console.log("Error in Signup", error);
     }
   };
 
@@ -64,27 +70,26 @@ const Signup = () => {
               text={"firstName"}
               onChange={(e) => setFirstName(e.target.value)}
               placeholder={"aryan"}
-              
             />
           </div>
           <div style={{ paddingBottom: "20px" }}>
             <InputBox
               text={"lastname"}
-              Onchange={(e) => setLastName(e.target.value)}
+              onchange={(e) => setLastName(e.target.value)}
               placeholder={"sharma"}
             />
           </div>
           <div style={{ paddingBottom: "20px" }}>
             <InputBox
               text={"email"}
-              Onchange={(e) => setEmail(e.target.value)}
+              onChange={(e) => setUsername(e.target.value)}
               placeholder={"abc@gmail.com"}
             />
           </div>
           <div style={{ paddingBottom: "20px" }}>
             <InputBox
               text={"password"}
-              Onchange={(e) => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder={"xxxxx"}
             />
           </div>
@@ -105,3 +110,56 @@ const Signup = () => {
 };
 
 export default Signup;
+
+// import  {useState}  from "react"
+// import  BottomWarning  from "../components/BottomWarning"
+// import  Button  from "../components/Button"
+// import  Heading  from "../components/Heading"
+// import  InputBox  from "../components/InputBox"
+// import  SubHeading  from "../components/SubHeading"
+// import axios from "axios";
+// import { useNavigate } from "react-router-dom"
+
+//  const Signup = () => {
+//     const [firstName, setFirstName] = useState("");
+//     const [lastName, setLastName] = useState("");
+//     const [username, setUsername] = useState("");
+//     const [password, setPassword] = useState("");
+//     const navigate = useNavigate();
+
+//     return <div className="bg-slate-300 h-screen flex justify-center">
+//     <div className="flex flex-col justify-center">
+//       <div className="rounded-lg bg-white w-80 text-center p-2 h-max px-4">
+//         <Heading label={"Sign up"} />
+//         <SubHeading label={"Enter your infromation to create an account"} />
+//         <InputBox onChange={e => {
+//           setFirstName(e.target.value);
+//         }} placeholder="John" label={"First Name"} />
+//         <InputBox onChange={(e) => {
+//           setLastName(e.target.value);
+//         }} placeholder="Doe" label={"Last Name"} />
+//         <InputBox onChange={e => {
+//           setUsername(e.target.value);
+//         }} placeholder="harkirat@gmail.com" label={"Email"} />
+//         <InputBox onChange={(e) => {
+//           setPassword(e.target.value)
+//         }} placeholder="123456" label={"Password"} />
+//         <div className="pt-4">
+//           <Button onClick={async () => {
+//             const response = await axios.post("http://localhost:3000/api/v1/user/signup", {
+//               username,
+//               firstName,
+//               lastName,
+//               password
+//             });
+//             localStorage.setItem("token", response.data.token)
+//             navigate("/dashboard")
+//           }} label={"Sign up"} />
+//         </div>
+//         <BottomWarning label={"Already have an account?"} buttonText={"Sign in"} to={"/signin"} />
+//       </div>
+//     </div>
+//   </div>
+// }
+
+// export default Signup

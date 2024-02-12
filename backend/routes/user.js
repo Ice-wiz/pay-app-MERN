@@ -12,8 +12,8 @@ const router = express.Router();
 // Define schema for signup request body using Zod
 const signupBody = zod.object({
   username: zod.string().email(),
-  firstName: zod.string(),
-  lastName: zod.string(),
+  firstname: zod.string(),
+  lastname: zod.string(),
   password: zod.string(),
 });
 
@@ -44,8 +44,9 @@ router.post("/signup", async (req, res) => {
   const user = await User.create({
     username: req.body.username,
     password: req.body.password,
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
+    firstname: req.body.firstname,
+    lastname: req.body.lastname,
+    
   });
 
   // Extract user ID
@@ -53,7 +54,7 @@ router.post("/signup", async (req, res) => {
 
   // Create account for new user with random balance
   const account = await Account.create({
-    userId: user.id,
+    userId,
     balance: 1 + Math.random() * 10000,
   });
 
