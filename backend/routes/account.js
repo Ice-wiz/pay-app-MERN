@@ -1,7 +1,7 @@
 const express = require("express");
 const { authMiddleware } = require("../middleware");
 const { Account } = require("../db.js");
-
+const mongoose = require("mongoose");
 
 const router = express.Router();
 
@@ -55,6 +55,8 @@ router.post("/transfer", authMiddleware, async (req, res) => {
   await session.commitTransaction();
   res.json({
     message: "transfer successful",
+    balance_to:toAccount.balance,
+    balance_from:account.balance
   });
 });
 

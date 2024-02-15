@@ -3,25 +3,39 @@ import Button from "../components/Button";
 import SubHeading from "../components/SubHeading";
 import InputBox from "../components/InputBox";
 import BottomWarning from "../components/BottomWarning";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Signin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate('/');
+    }
+  }, []);
 
   const handleOnClick = async (event) => {
     event.preventDefault();
 
     try {
       const response = await axios.post("http://localhost:3000/api/v1/user/signin", {
-        username: email,
+        email: email,
         password: password,
       });
-      console.log("Signin successful", response);
+      console.log("Signin successful", response);  
+      localStorage.setItem("token", response.data.token);
      
-      // Redirect the user to the dashboard page
-      // You can use the useHistory hook from react-router-dom to do this
+      const firstname=response.data.firstname;   
+    // Redirect the user to the dashboard page
+    navigate(`/dashboard/${firstname}`);
+    // You can use the useHistory hook from react-router-dom to do this
+
     } catch (error) {
       console.error("Error during signin", error);
       // Display an error message to the user
@@ -61,25 +75,25 @@ const Signin = () => {
             <InputBox
               text={"email"}
               placeholder={"abc@gmail.com"}
-              onChange={(e) => setEmail(e.target.value)}
+              setFunction={setEmail}
             />
           </div>
           <div style={{ paddingBottom: "20px" }}>
             <InputBox
               text={"password"}
-              onChange={(e) => setPassword(e.target.value)}
+              setFunction={setPassword}
               placeholder={"xxxxx"}
             />
           </div>
           <div style={{ paddingBottom: "20px", width: "200px" }}>
             <Button text={"Click"} onClick={handleOnClick} />
           </div>
-          {/* <div style={{ paddingBottom: "20px", width: "200px" }}>
+          <div style={{ paddingBottom: "20px", width: "200px" }}>
             <BottomWarning
               text={"Already have an account?"}
               buttonText={"Signup"}
             />
-          </div> */}
+          </div>
         </div>
       </div>
     </>

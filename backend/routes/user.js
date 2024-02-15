@@ -11,7 +11,7 @@ const router = express.Router();
 
 // Define schema for signup request body using Zod
 const signupBody = zod.object({
-  username: zod.string().email(),
+  email: zod.string().email(),
   firstname: zod.string(),
   lastname: zod.string(),
   password: zod.string(),
@@ -30,7 +30,7 @@ router.post("/signup", async (req, res) => {
 
   // Check if user already exists
   const existingUser = await User.findOne({
-    username: req.body.username,
+    email: req.body.email,
   });
 
   // If user exists, return error response
@@ -42,7 +42,7 @@ router.post("/signup", async (req, res) => {
 
   // Create new user
   const user = await User.create({
-    username: req.body.username,
+    email: req.body.email,
     password: req.body.password,
     firstname: req.body.firstname,
     lastname: req.body.lastname,
@@ -55,7 +55,7 @@ router.post("/signup", async (req, res) => {
   // Create account for new user with random balance
   const account = await Account.create({
     userId,
-    balance: 1 + Math.random() * 10000,
+    balance: 10000,
   });
 
   // Generate JWT token for new user
@@ -76,12 +76,12 @@ router.post("/signup", async (req, res) => {
 
 // Define schema for signin request body using Zod
 const signinBody = zod.object({
-  username: zod.string().email(),
+  email: zod.string().email(),
   password: zod.string(),
 });
 
 // Route for handling user signin
-router.post("/signin", authMiddleware, async (req, res) => {
+router.post("/signin", async (req, res) => {
   // Validate request body against schema
   const { success } = signinBody.safeParse(req.body);
   // If validation fails, return error response
@@ -93,23 +93,32 @@ router.post("/signin", authMiddleware, async (req, res) => {
 
   // Authenticate user
   const user = await User.findOne({
-    username: req.body.username,
+    email: req.body.email,
     password: req.body.password,
   });
 
   // If user is found, generate and return JWT token
   if (user) {
-    const token = jwt.sign(
-      {
-        userId: user._id,
-      },
-      JWT_SECRET
-    );
+    // Find the account associated with the user
+    const account = await Account.findOne({ userId: user._id });
 
-    res.json({
-      token: token,
-    });
-    return;
+    // If account is found, send the balance in the response
+    if (account) {
+      const token = jwt.sign(
+        {
+          userId: user._id,
+        },
+        JWT_SECRET
+      );
+
+      res.json({
+        message: "user logged in successfully",
+        token: token,
+        balance: account.balance,
+        firstname: user.firstname,
+      });
+      return;
+    }
   }
 
   // If authentication fails, return error response
@@ -121,8 +130,8 @@ router.post("/signin", authMiddleware, async (req, res) => {
 // Define schema for update request body using Zod
 const updateBody = zod.object({
   password: zod.string().optional(),
-  firstName: zod.string().optional(),
-  lastName: zod.string().optional(),
+  firstname: zod.string().optional(),
+  lastname: zod.string().optional(),
 });
 
 // Route for handling user details update
@@ -153,12 +162,12 @@ router.get("/bulk", async (req, res) => {
   const users = await User.find({
     $or: [
       {
-        firstName: {
+        firstname: {
           $regex: filter,
         },
       },
       {
-        lastName: {
+        lastname: {
           $regex: filter,
         },
       },
@@ -168,9 +177,9 @@ router.get("/bulk", async (req, res) => {
   // Return filtered users
   res.json({
     user: users.map((user) => ({
-      username: user.username,
-      firstName: user.firstname,
-      lastName: user.lastname,
+      email: user.email,
+      firstname: user.firstname,
+      lastname: user.lastname,
       _id: user._id,
     })),
   });

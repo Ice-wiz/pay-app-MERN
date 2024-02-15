@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 mongoose.connect("mongodb+srv://ok:ok@cluster3.pcvqsyk.mongodb.net/");
 
 const userSchema = new mongoose.Schema({
-  username: String,
+  email: String,
   password: String,
   firstname: String,
   lastname: String,

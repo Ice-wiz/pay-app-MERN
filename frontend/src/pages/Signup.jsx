@@ -3,18 +3,26 @@ import Button from "../components/Button";
 import SubHeading from "../components/SubHeading";
 import InputBox from "../components/InputBox";
 import BottomWarning from "../components/BottomWarning";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+
 
 const Signup = () => {
   //states
   const [firstname, setFirstName] = useState("");
   const [lastname, setLastName] = useState("");
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate('/');
+    }
+  }, []);
 
   const handleOnClick = async (event) => {
     event.preventDefault();
@@ -22,14 +30,14 @@ const Signup = () => {
       const response = await axios.post(
         "http://localhost:3000/api/v1/user/signup",
         {
-          username,
+          email,
           firstname,
           lastname,
           password,
         }
       );
       localStorage.setItem("token", response.data.token);
-      navigate("/dashboard");
+      navigate(`/dashboard/${firstname}`);
       console.log("Signup Successful", response.data);
     } catch (error) {
       console.log("Error in Signup", error);
@@ -47,8 +55,9 @@ const Signup = () => {
         }}
       >
         {/* Card-like container */}
+        
         <div
-          style={{
+          style={{ 
             padding: "10px",
             borderRadius: "10px",
             boxShadow: "0 4px 8px rgba(0.1, 0.1, 0.1, 0.3)",
@@ -68,28 +77,28 @@ const Signup = () => {
           <div style={{ paddingBottom: "20px" }}>
             <InputBox
               text={"firstName"}
-              onChange={(e) => setFirstName(e.target.value)}
+              setFunction={setFirstName}
               placeholder={"aryan"}
             />
           </div>
           <div style={{ paddingBottom: "20px" }}>
             <InputBox
               text={"lastname"}
-              onchange={(e) => setLastName(e.target.value)}
+              setFunction={setLastName}
               placeholder={"sharma"}
             />
           </div>
           <div style={{ paddingBottom: "20px" }}>
             <InputBox
               text={"email"}
-              onChange={(e) => setUsername(e.target.value)}
+              setFunction={setEmail}
               placeholder={"abc@gmail.com"}
             />
           </div>
           <div style={{ paddingBottom: "20px" }}>
             <InputBox
               text={"password"}
-              onChange={(e) => setPassword(e.target.value)}
+              setFunction={setPassword}
               placeholder={"xxxxx"}
             />
           </div>
@@ -123,7 +132,7 @@ export default Signup;
 //  const Signup = () => {
 //     const [firstName, setFirstName] = useState("");
 //     const [lastName, setLastName] = useState("");
-//     const [username, setUsername] = useState("");
+//     const [Email, setEmail] = useState("");
 //     const [password, setPassword] = useState("");
 //     const navigate = useNavigate();
 
@@ -139,7 +148,7 @@ export default Signup;
 //           setLastName(e.target.value);
 //         }} placeholder="Doe" label={"Last Name"} />
 //         <InputBox onChange={e => {
-//           setUsername(e.target.value);
+//           setEmail(e.target.value);
 //         }} placeholder="harkirat@gmail.com" label={"Email"} />
 //         <InputBox onChange={(e) => {
 //           setPassword(e.target.value)
@@ -147,7 +156,7 @@ export default Signup;
 //         <div className="pt-4">
 //           <Button onClick={async () => {
 //             const response = await axios.post("http://localhost:3000/api/v1/user/signup", {
-//               username,
+//               Email,
 //               firstName,
 //               lastName,
 //               password

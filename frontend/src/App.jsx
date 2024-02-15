@@ -7,14 +7,17 @@ import SendMoney from "./pages/SendMoney";
 // import Appbar from "./components/Appbar";
 
 function App() {
+  const token = localStorage.getItem("token");
+  console.log(token);
+
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/signin" element={<Signin />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/send" element={<SendMoney />} />
+          {<Route path="/signin" element={<Signin />} />}
+          {<Route path="/signup" element={<Signup />} />}
+          {token && <Route path="/dashboard/:firstname" element={<Dashboard />} />}
+          {token && <Route path="/send" element={<SendMoney />} />}
         </Routes>
       </BrowserRouter>
     </>

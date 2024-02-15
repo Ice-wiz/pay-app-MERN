@@ -1,13 +1,37 @@
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 const SendMoney = () => {
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
   const name = searchParams.get("name");
   const [amount, setAmount] = useState(0);
-  
+  const navigate = useNavigate();
+
+const handleOnClick = async()=>{
+  const response=await axios.post(
+    "http://localhost:3000/api/v1/account/transfer",
+    {
+      to:id,
+      amount,
+    },
+    {
+      headers: {
+        Authorization:
+          "Bearer " + localStorage.getItem("token"),
+      },
+    }
+  );
+
+  const balance_from=response.data.balance_from;
+  const balance_to=response.data.balance_to;
+
+
+  navigate(`/dashboard/${name}`,{ state: { balance_from: balance_from, balance_to: balance_to } });
+}
 
   return (
     <div class="flex justify-center h-screen bg-gray-100">
@@ -42,21 +66,7 @@ const SendMoney = () => {
                 />
               </div>
               <button
-                onClick={() => {
-                  axios.post(
-                    "http://localhost:3000/api/v1/account/transfer",
-                    {
-                      to: id,
-                      amount,
-                    },
-                    {
-                      headers: {
-                        Authorization:
-                          "Bearer " + localStorage.getItem("token"),
-                      },
-                    }
-                  );
-                }}
+                onClick={handleOnClick}
                 class="justify-center rounded-md text-sm font-medium ring-offset-background transition-colors h-10 px-4 py-2 w-full bg-green-500 text-white"
               >
                 Initiate Transfer

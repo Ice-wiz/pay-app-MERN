@@ -1,7 +1,7 @@
 import { Input } from "postcss";
 import React from "react";
 
-const Appbar = () => {
+const Appbar = ({user}) => {  
   return (
     <div >
       <div
@@ -13,7 +13,7 @@ const Appbar = () => {
         }}
       >
         <div>Payment app</div>
-        <div>hello,User</div>
+        <div>hello,{user}</div>
       </div>
     </div>
   );
