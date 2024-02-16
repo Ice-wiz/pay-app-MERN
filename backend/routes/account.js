@@ -6,14 +6,13 @@ const mongoose = require("mongoose");
 const router = express.Router();
 
 router.get("/balance", authMiddleware, async (req, res) => {
-  const account = Account.findOne({
-    userId: req.userId,
-  });
-  res
-    .json({
-      balance: account.balance,
+    const account = await Account.findOne({
+        userId: req.userId
+    });
+
+    res.json({
+        balance: account.balance
     })
-    .status(200);
 });
 
 router.post("/transfer", authMiddleware, async (req, res) => {
